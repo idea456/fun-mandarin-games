@@ -1,12 +1,33 @@
-.game-area {
+.game-area-1 {
   font-family: kaiTi;
   display: inline-block;
   position: relative;
   width: 604px;
   height: 600px;
   border: 2px solid #000;
-  /* background-color: black; */
+  background-image: url("../images/SnakeGame/background.jpg");
+  background-size: 604px 600px;
+}
+
+.game-area-2 {
+  font-family: kaiTi;
+  display: inline-block;
+  position: relative;
+  width: 604px;
+  height: 600px;
+  border: 2px solid #000;
   background-image: url("../images/SnakeGame/background2.jpg");
+  background-size: 604px 600px;
+}
+
+.game-area-3 {
+  font-family: kaiTi;
+  display: inline-block;
+  position: relative;
+  width: 604px;
+  height: 600px;
+  border: 2px solid #000;
+  background-image: url("../images/SnakeGame/background3.jpg");
   background-size: 604px 600px;
 }
 
