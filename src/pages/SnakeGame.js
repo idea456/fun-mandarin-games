@@ -26,9 +26,10 @@ let animalList = [
 ];
 
 let fruitList = [
-  ["力", require("../audio/SnakeGame/狗.mp3")],
-  ["干", require("../audio/SnakeGame/牛.mp3")],
-  ["食", require("../audio/SnakeGame/虎.mp3")]
+  ["苹果", require("../audio/SnakeGame/苹果.mp3")],
+  ["杏子", require("../audio/SnakeGame/杏子.mp3")],
+  ["香蕉", require("../audio/SnakeGame/香蕉.mp3")],
+  ["水果", require("../audio/SnakeGame/水果.mp3")]
 ];
 
 let levels = [animalList, fruitList];
@@ -330,19 +331,23 @@ class SnakeGame extends React.Component {
         <Container>
           <Modal show={this.state.show} onHide={this.handleCloseModal}>
             <Modal.Header closeButton>
-              <Modal.Title>Game over</Modal.Title>
+              <Modal.Title>Game over!</Modal.Title>
             </Modal.Header>
-            <Modal.Body>Score : {this.state.score}</Modal.Body>
+            <Modal.Body>Total Score : {this.state.score}</Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary">
+              <Button variant="danger">
                 <Link to="/" style={{ color: "white" }}>
                   Quit
                 </Link>
               </Button>
-              <Button variant="primary" onClick={this.onRestartGame}>
+              <Button
+                variant="warning"
+                onClick={this.onRestartGame}
+                style={{ color: "white" }}
+              >
                 Restart
               </Button>
-              <Button variant="primary" onClick={this.onNextLevel}>
+              <Button variant="info" onClick={this.onNextLevel}>
                 Next Level
               </Button>
             </Modal.Footer>
@@ -379,7 +384,12 @@ class SnakeGame extends React.Component {
                   <h1>Score : {this.state.score}</h1>
                   <Card className="shadow p-3 mb-5 bg-white rounded">
                     <Card.Body>
-                      <h1 style={{ fontSize: 190, fontFamily: "kaiTi" }}>
+                      <h1
+                        style={{
+                          fontSize: 130,
+                          fontFamily: "kaiTi"
+                        }}
+                      >
                         {this.state.levelKanji[0]}
                       </h1>
                     </Card.Body>
