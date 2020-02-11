@@ -1,25 +1,51 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Button, ButtonGroup } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import "./App.css";
+import SnakeGame from "./pages/SnakeGame";
+import SpaceInvaders from "./pages/SpaceInvaders";
+import IceCreamGame from "./pages/IceCreamGame";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Switch>
+        <Route path="/" exact>
+          <div className="App">
+            <h1>Fun Mandarin</h1>
+            <ButtonGroup vertical>
+              <Button variant="danger" size="lg">
+                <Link to="/snake-game" style={{ color: "white" }}>
+                  Snake Game
+                </Link>
+              </Button>
+              <Button variant="warning" size="lg">
+                <Link to="/ice-cream-game" style={{ color: "white" }}>
+                  Ice Cream
+                </Link>
+              </Button>
+              <Button variant="primary" size="lg">
+                <Link to="/space-invaders" style={{ color: "white" }}>
+                  Space Invaders
+                </Link>
+              </Button>
+            </ButtonGroup>
+          </div>
+        </Route>
+        <Route path="/snake-game">
+          <SnakeGame />
+        </Route>
+
+        <Route path="/ice-cream-game">
+          <IceCreamGame />
+        </Route>
+
+        <Route path="/space-invaders">
+          <SpaceInvaders />
+        </Route>
+      </Switch>
+    </Router>
   );
 }
 

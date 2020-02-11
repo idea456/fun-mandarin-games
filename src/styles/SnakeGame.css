@@ -1,0 +1,33 @@
+.game-area {
+  font-family: kaiTi;
+  display: inline-block;
+  position: relative;
+  width: 604px;
+  height: 600px;
+  border: 2px solid #000;
+  /* background-color: black; */
+  background-image: url("../images/SnakeGame/background2.jpg");
+  background-size: 604px 600px;
+}
+
+.snake-dot {
+  position: absolute;
+  width: 4%;
+  height: 4%;
+  background-color: rgb(0, 78, 10);
+  z-index: 2;
+}
+
+.snake-food {
+  position: absolute;
+  z-index: 1;
+  height: 4%;
+  width: 4%;
+  color: white;
+  font-size: 20pt;
+}
+
+@font-face {
+  font-family: kaiTi;
+  src: url("../fonts/KaiTi.ttf");
+}
