@@ -314,11 +314,9 @@ class SnakeGame extends React.Component {
         <Container>
           <Modal show={this.state.show} onHide={this.handleCloseModal}>
             <Modal.Header closeButton>
-              <Modal.Title>Modal heading</Modal.Title>
+              <Modal.Title>Game over</Modal.Title>
             </Modal.Header>
-            <Modal.Body>
-              Woohoo, you're reading this text in a modal!
-            </Modal.Body>
+            <Modal.Body>Score : {this.state.score}</Modal.Body>
             <Modal.Footer>
               <Button variant="secondary">Quit</Button>
               <Button variant="primary" onClick={this.onRestartGame}>
