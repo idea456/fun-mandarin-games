@@ -34,7 +34,8 @@ export const levelsAssets = [
   ["level4", require("../../images/SnakeGame/background4.jpg")]
 ];
 
-export const level1 = [
+// nama_level = [["title level", background_level, level_list]]
+let level1 = [
   ["animals", require("../../images/SnakeGame/background.jpg"), animalList],
   ["fruits", require("../../images/SnakeGame/background2.jpg"), fruitList],
   [
@@ -69,7 +70,7 @@ export const level1 = [
   ]
 ];
 
-export const level2 = [
+let level2 = [
   ["animals", require("../../images/SnakeGame/background.jpg"), animalList],
   ["fruits", require("../../images/SnakeGame/background.jpg"), fruitList],
   [
@@ -103,7 +104,7 @@ export const level2 = [
     vegetableList
   ]
 ];
-export const level3 = [
+let level3 = [
   ["animals", require("../../images/SnakeGame/background.jpg"), animalList],
   ["fruits", require("../../images/SnakeGame/background.jpg"), fruitList],
   [
@@ -137,7 +138,7 @@ export const level3 = [
     vegetableList
   ]
 ];
-export const level4 = [
+let level4 = [
   ["animals", require("../../images/SnakeGame/background.jpg"), animalList],
   ["fruits", require("../../images/SnakeGame/background.jpg"), fruitList],
   [

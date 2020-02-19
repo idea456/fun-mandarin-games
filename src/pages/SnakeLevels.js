@@ -5,11 +5,13 @@ import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Card from "react-bootstrap/Card";
 
 import { levels, levelsAssets } from "../data/SnakeGame/SnakeGame";
 import SnakeGame from "../pages/SnakeGame";
 import Level from "../components/SnakeGame/Level";
 import SubLevel from "../components/SnakeGame/SubLevel";
+import App from "../App";
 
 class SnakeLevels extends React.Component {
   render() {
@@ -30,6 +32,20 @@ class SnakeLevels extends React.Component {
                       />
                     );
                   })}
+                  <Card
+                    style={{
+                      border: "none",
+                      textAlign: "center"
+                    }}
+                  >
+                    <Card.Body>
+                      <Button variant="danger">
+                        <Link style={{ color: "white" }} to="/">
+                          Back
+                        </Link>
+                      </Button>
+                    </Card.Body>
+                  </Card>
                 </Col>
               </Row>
             </Container>
@@ -42,6 +58,10 @@ class SnakeLevels extends React.Component {
               </Route>
             );
           })}
+
+          <Route path="/">
+            <App />
+          </Route>
         </Switch>
       </Router>
     );

@@ -5,8 +5,11 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import "./App.css";
 
 import SnakeLevels from "./pages/SnakeLevels";
+import SnakeGame from "./pages/SnakeGame";
 import SpaceInvaders from "./pages/SpaceInvaders";
 import IceCreamGame from "./pages/IceCreamGame";
+
+import { fruitList } from "./data/SnakeGame/SnakeGame";
 
 function App() {
   return (

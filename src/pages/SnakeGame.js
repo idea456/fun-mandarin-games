@@ -340,7 +340,7 @@ class SnakeGame extends React.Component {
             <Modal.Body>Total Score : {this.state.score}</Modal.Body>
             <Modal.Footer>
               <Button variant="danger">
-                <Link to="/" style={{ color: "white" }}>
+                <Link to={this.props.url} style={{ color: "white" }}>
                   Quit
                 </Link>
               </Button>
