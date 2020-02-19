@@ -3,7 +3,8 @@ import { Button, ButtonGroup } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import "./App.css";
-import SnakeGame from "./pages/SnakeGame";
+
+import SnakeLevels from "./pages/SnakeLevels";
 import SpaceInvaders from "./pages/SpaceInvaders";
 import IceCreamGame from "./pages/IceCreamGame";
 
@@ -16,7 +17,7 @@ function App() {
             <h1>Fun Mandarin</h1>
             <ButtonGroup vertical>
               <Button variant="danger" size="lg">
-                <Link to="/snake-game" style={{ color: "white" }}>
+                <Link to="/snake-levels" style={{ color: "white" }}>
                   Snake Game
                 </Link>
               </Button>
@@ -33,8 +34,8 @@ function App() {
             </ButtonGroup>
           </div>
         </Route>
-        <Route path="/snake-game">
-          <SnakeGame />
+        <Route path="/snake-levels">
+          <SnakeLevels />
         </Route>
 
         <Route path="/ice-cream-game">

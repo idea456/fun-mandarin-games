@@ -12,28 +12,9 @@ import Card from "react-bootstrap/Card";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
-let kanjis = ["月", "日", "木", "水", "火", "金"];
+import { hanzis } from "../data/SnakeGame/SnakeGame";
 
-let animalList = [
-  ["狗", require("../audio/SnakeGame/狗.mp3")],
-  ["牛", require("../audio/SnakeGame/牛.mp3")],
-  ["虎", require("../audio/SnakeGame/虎.mp3")],
-  ["蛇", require("../audio/SnakeGame/蛇.mp3")],
-  ["马", require("../audio/SnakeGame/马.mp3")],
-  ["羊", require("../audio/SnakeGame/羊.mp3")],
-  ["猴", require("../audio/SnakeGame/猴.mp3")],
-  ["猪", require("../audio/SnakeGame/猪.mp3")]
-];
-
-let fruitList = [
-  ["苹果", require("../audio/SnakeGame/苹果.mp3")],
-  ["杏子", require("../audio/SnakeGame/杏子.mp3")],
-  ["香蕉", require("../audio/SnakeGame/香蕉.mp3")],
-  ["水果", require("../audio/SnakeGame/水果.mp3")]
-];
-
-let levels = [animalList, fruitList];
-
+// change the background here
 let background = [`game-area-1`, `game-area-2`, `game-area-3`];
 
 const getRandomCoordinates = (n = 1) => {
@@ -47,10 +28,10 @@ const getRandomCoordinates = (n = 1) => {
     let check = true;
     while (check) {
       for (let j = 0; j < ret.length; j++) {
-        if ((x === ret[j][0] && y === ret[j][1]) || x === 0 || y === 0) {
+        if (x === ret[j][0] && y === ret[j][1]) {
           x = Math.floor((Math.random() * (max - min + 1) + min) / 2) * 4;
           y = Math.floor((Math.random() * (max - min + 1) + min) / 2) * 4;
-          continue;
+          j = 0;
         }
       }
       check = false;
@@ -68,23 +49,22 @@ const randomKanji = list => {
 };
 
 class SnakeGame extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.levelCount = 1;
-    this.level = 0;
+    this.level = this.props.level;
     this.background = background[Math.floor(Math.random() * background.length)];
     this.hanziCount = 2;
     this.state = {
-      level: 0,
       gameOver: false,
       show: false,
       score: 0,
       food: getRandomCoordinates(this.hanziCount),
       levelFood: getRandomCoordinates(this.levelCount),
-      kanji: randomKanji(kanjis),
+      kanji: randomKanji(hanzis),
       kanjiList: this.randomKanjis(4),
-      levelKanji: randomKanji(levels[this.level]),
-      speed: 150,
+      levelKanji: randomKanji(this.level),
+      speed: 250,
       previousDirection: "",
       direction: "RIGHT",
       snakeDots: [
@@ -201,9 +181,9 @@ class SnakeGame extends React.Component {
           score: this.state.score - (this.state.score === 0 ? 0 : 1),
           food: getRandomCoordinates(this.hanziCount),
           levelFood: getRandomCoordinates(this.levelCount),
-          kanji: randomKanji(kanjis),
+          kanji: randomKanji(hanzis),
           kanjiList: this.randomKanjis(this.hanziCount),
-          levelKanji: randomKanji(levels[this.level])
+          levelKanji: randomKanji(this.level)
         });
         // check if the snake has shrunk too low
         if (this.state.snakeDots.length === 2) {
@@ -215,19 +195,39 @@ class SnakeGame extends React.Component {
     }
     for (let i = 0; i < this.state.levelFood.length; i++) {
       let levelFood = this.state.levelFood[i];
-      if (head[0] === levelFood[0] && head[1] === levelFood[1]) {
-        this.hanziCount += this.hanziCount === 5 ? 0 : 1;
-        let audio = new Audio(this.state.levelKanji[1]);
-        audio.play();
-        this.setState({
-          score: this.state.score + 1,
-          food: getRandomCoordinates(this.hanziCount),
-          levelFood: getRandomCoordinates(this.levelCount),
-          kanji: randomKanji(kanjis),
-          kanjiList: this.randomKanjis(this.hanziCount),
-          levelKanji: randomKanji(levels[this.level])
-        });
-        this.enlargeSnake();
+      if (this.state.levelKanji[0].length === 2) {
+        if (
+          (head[0] === levelFood[0] && head[1] === levelFood[1]) ||
+          (head[0] === levelFood[0] + 4 && head[1] === levelFood[1])
+        ) {
+          this.hanziCount += this.hanziCount === 5 ? 0 : 1;
+          let audio = new Audio(this.state.levelKanji[1]);
+          audio.play();
+          this.setState({
+            score: this.state.score + 1,
+            food: getRandomCoordinates(this.hanziCount),
+            levelFood: getRandomCoordinates(this.levelCount),
+            kanji: randomKanji(hanzis),
+            kanjiList: this.randomKanjis(this.hanziCount),
+            levelKanji: randomKanji(this.level)
+          });
+          this.enlargeSnake();
+        }
+      } else {
+        if (head[0] === levelFood[0] && head[1] === levelFood[1]) {
+          this.hanziCount += this.hanziCount === 5 ? 0 : 1;
+          let audio = new Audio(this.state.levelKanji[1]);
+          audio.play();
+          this.setState({
+            score: this.state.score + 1,
+            food: getRandomCoordinates(this.hanziCount),
+            levelFood: getRandomCoordinates(this.levelCount),
+            kanji: randomKanji(hanzis),
+            kanjiList: this.randomKanjis(this.hanziCount),
+            levelKanji: randomKanji(this.level)
+          });
+          this.enlargeSnake();
+        }
       }
     }
   }
@@ -284,13 +284,13 @@ class SnakeGame extends React.Component {
   randomKanjis(n) {
     let ret = [];
     for (let i = 0; i < n; i++) {
-      ret.push(randomKanji(kanjis));
+      ret.push(randomKanji(hanzis));
     }
     return ret;
   }
 
   onNextLevel() {
-    this.level += this.level === levels.length - 1 ? 0 : 1;
+    // this.level += this.level === this.level.length - 1 ? 0 : 1;
     this.background = background[Math.floor(Math.random() * background.length)];
     this.onRestartGame();
   }
@@ -302,8 +302,8 @@ class SnakeGame extends React.Component {
       show: false,
       food: getRandomCoordinates(this.hanziCount),
       levelFood: getRandomCoordinates(this.levelCount),
-      levelKanji: randomKanji(levels[this.level]),
-      kanji: randomKanji(kanjis),
+      levelKanji: randomKanji(this.level),
+      kanji: randomKanji(hanzis),
       speed: 100,
       direction: "RIGHT",
       snakeDots: [
@@ -329,8 +329,12 @@ class SnakeGame extends React.Component {
     return (
       <div>
         <Container>
-          <Modal show={this.state.show} onHide={this.handleCloseModal}>
-            <Modal.Header closeButton>
+          <Modal
+            show={this.state.show}
+            onHide={this.handleCloseModal}
+            backdrop="static"
+          >
+            <Modal.Header>
               <Modal.Title>Game over!</Modal.Title>
             </Modal.Header>
             <Modal.Body>Total Score : {this.state.score}</Modal.Body>
@@ -346,9 +350,6 @@ class SnakeGame extends React.Component {
                 style={{ color: "white" }}
               >
                 Restart
-              </Button>
-              <Button variant="info" onClick={this.onNextLevel}>
-                Next Level
               </Button>
             </Modal.Footer>
           </Modal>

@@ -31,6 +31,17 @@
   background-size: 604px 600px;
 }
 
+.game-area-3 {
+  font-family: kaiTi;
+  display: inline-block;
+  position: relative;
+  width: 604px;
+  height: 600px;
+  border: 2px solid #000;
+  background-image: url("../images/SnakeGame/background4.jpg");
+  background-size: 604px 600px;
+}
+
 .snake-dot {
   position: absolute;
   width: 4%;
