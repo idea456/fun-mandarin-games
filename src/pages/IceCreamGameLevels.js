@@ -14,29 +14,28 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 
-import { levels, levelsAssets } from "../data/SnakeGame/SnakeGame";
-import SnakeGame from "../pages/SnakeGame";
-import Level from "../components/SnakeGame/Level";
-import SubLevel from "../components/SnakeGame/SubLevel";
+import { levels, levelsAssets } from "../data/IceCreamGame/IceCreamGame";
+import Level from "../components/IceCreamGame/Level";
+import SubLevel from "../components/IceCreamGame/SubLevel";
 import App from "../App";
 
-function SnakeLevels() {
-  const { path } = useRouteMatch();
+function IceCreamGameLevels(props) {
+  let { path } = useRouteMatch();
 
   return (
-    <Router>
+    <div>
       <Switch>
-        <Route exact path="/snake-levels">
+        <Route exact path={path}>
           <Container>
             <Row>
               <Col>
-                {levels.map((level, i) => {
+                {levelsAssets.map((level, i) => {
                   return (
                     <Level
                       key={i}
                       index={i}
-                      title={levelsAssets[i][0]}
-                      backgroundImg={levelsAssets[i][1]}
+                      title={level[0]}
+                      backgroundImg={level[1]}
                     />
                   );
                 })}
@@ -60,18 +59,9 @@ function SnakeLevels() {
         </Route>
 
         <Route path={`${path}/:levelId`} component={SubLevel} />
-
-        <Route path="/">
-          <App />
-        </Route>
       </Switch>
-    </Router>
+    </div>
   );
 }
 
-function Hello() {
-  const { levelId } = useParams();
-  return <h1>Hello {levelId}</h1>;
-}
-
-export default SnakeLevels;
+export default IceCreamGameLevels;

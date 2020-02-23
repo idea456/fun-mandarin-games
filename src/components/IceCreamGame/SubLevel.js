@@ -15,10 +15,10 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
-import { levels } from "../../data/SnakeGame/SnakeGame";
+import { levels } from "../../data/IceCreamGame/IceCreamGame";
 
-import SnakeGame from "../../pages/SnakeGame";
-import SnakeLevels from "../../pages/SnakeLevels";
+import IceCreamGame from "../../pages/IceCreamGame";
+import IceCreamGameLevels from "../../pages/IceCreamGameLevels";
 
 function SubLevel(props) {
   let { levelId } = useParams();
@@ -64,7 +64,7 @@ function SubLevel(props) {
               >
                 <Card.Body>
                   <Button variant="danger">
-                    <Link style={{ color: "white" }} to="/snake-levels">
+                    <Link style={{ color: "white" }} to="/ice-cream-levels">
                       Back
                     </Link>
                   </Button>
@@ -75,19 +75,12 @@ function SubLevel(props) {
         </Container>
       </Route>
 
-      {levels[levelId].map((level, i) => {
-        return (
-          <Route path={`${path}/${level[0]}`}>
-            <SnakeGame
-              background={level[1]}
-              url={`/snake-levels/${levelId}`}
-              level={level[2]}
-            />
-          </Route>
-        );
-      })}
+      <Route
+        path={`/ice-cream-levels/:levelId/:levelName`}
+        component={IceCreamGame}
+      />
 
-      <Route path="/snake-levels" component={SnakeLevels} />
+      <Route path="/ice-cream-levels" component={IceCreamGameLevels} />
     </Switch>
   );
 }

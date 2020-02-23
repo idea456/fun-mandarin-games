@@ -26,9 +26,9 @@ function Laser(x, y, p) {
     }
   };
 
-  this.hitsHanzi = function(hanzi, hanziList) {
-    for (let i = 0; i < hanziList.length; i++) {
-      if (hanzi.hanzi[0] === hanziList[i][0]) return true;
+  this.hitsHanzi = function(hanzi, levelHanzi) {
+    for (let i = 0; i < levelHanzi.length; i++) {
+      if (hanzi === levelHanzi[i][0]) return true;
     }
     return false;
   };

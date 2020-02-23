@@ -1,17 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import "../styles/IceCreamGame.css";
 import P5Wrapper from "react-p5-wrapper";
+import {
+  Link,
+  Route,
+  Switch,
+  useRouteMatch,
+  useParams
+} from "react-router-dom";
 
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
+import { levels } from "../data/IceCreamGame/IceCreamGame";
+
+import IceCreamGameLevels from "../pages/IceCreamGameLevels";
 import IceCreamBall from "../components/IceCreamGame/IceCreamBall";
 import IceCreamCone from "../components/IceCreamGame/IceCreamCone";
 
-import { levels, hanzis } from "../data/IceCreamGame/IceCreamGame";
-
-let levelIndex = 0;
-let hanziIndex = 0;
 let score = 0;
 let iceCreamCones = [];
 let iceCreamBalls = [];
@@ -46,28 +52,40 @@ function spawn(count, p) {
   }
 }
 
-class IceCreamGame extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      end: false,
-      showModal: false,
-      score: 0,
-      nextLevel: false
-    };
-    this.sketch = this.sketch.bind(this);
-    this.handleShowModal = this.handleShowModal.bind(this);
-    this.handleCloseModal = this.handleCloseModal.bind(this);
-  }
+function IceCreamGame(props) {
+  let { path } = useRouteMatch();
+  let { levelId, levelName } = useParams();
+  let score = 0;
 
-  sketch(p) {
-    // reload the page just once
-    window.onload = function() {
-      if (!window.location.hash) {
-        window.location = window.location + "#loaded";
-        window.location.reload();
+  const [end, setEnd] = useState(false);
+  const [showModal, setModal] = useState(false);
+
+  const indexOfLevelName = () => {
+    for (let i = 0; i < levels[levelId].length; i++) {
+      if (levels[levelId][i][0] === levelName) {
+        return i;
       }
-    };
+    }
+  };
+
+  let level = levels[levelId][indexOfLevelName()][2];
+
+  const onRestartGame = () => {
+    window.location.reload();
+  };
+
+  const createHanzis = () => {
+    let ret = [];
+    for (let i = 0; i < level.length; i++) {
+      ret.push([level[i][0], level[i][2]]);
+    }
+    return ret;
+  };
+
+  let hanzis = createHanzis();
+
+  const sketch = p => {
+    // reload the page just once
 
     p.preload = function() {
       imgCone = p.loadImage(require("../images/IceCream/ice-cream-cone.png"));
@@ -84,36 +102,37 @@ class IceCreamGame extends React.Component {
       bg = p.loadImage(require("../images/IceCream/background.jpg"));
     };
 
-    p.setup = function() {
+    window.onload = function() {
+      if (!window.location.hash) {
+        window.location = window.location + "#loaded";
+        window.location.reload();
+      }
+    };
+
+    p.setup = () => {
       window.onload();
-      // startTimer(120);
       p.createCanvas(p.windowWidth, p.windowHeight);
-      let coor = spawn(levels[levelIndex].length, p);
-      for (let i = 0; i < levels[levelIndex].length; i++) {
+      let coor = spawn(level.length, p);
+      for (let i = 0; i < level.length; i++) {
         let cone = new IceCreamCone(
           coor[i][0],
           coor[i][1],
-          levels[levelIndex][i][2],
-          levels[levelIndex][i][1],
-          levels[levelIndex][i][0],
-          levels[levelIndex][i][3],
+          level[i][2],
+          level[i][1],
+          level[i][0],
+          level[i][3],
           p
         );
         cone.setup();
         iceCreamCones.push(cone);
       }
-      while (hanzis[hanziIndex].length !== 0) {
+      while (hanzis.length !== 0) {
         console.log(true);
         dropIceCreamBalls();
       }
     };
 
     p.draw = () => {
-      if (this.state.end) {
-        if (this.state.nextLevel) {
-          goToNextLevel();
-        }
-      }
       p.background(bg);
 
       for (let i = 0; i < iceCreamCones.length; i++) {
@@ -173,9 +192,10 @@ class IceCreamGame extends React.Component {
                 audio.play();
                 iceCreamCones[j].addNewIceCreamBall(iceCreamBalls[i][0]);
                 iceCreamBalls.splice(i, 1);
-                this.setState({ score: this.state.score + 1 });
+                score += 1;
                 if (iceCreamBalls.length === 0) {
-                  this.setState({ end: true, showModal: true });
+                  setEnd(true);
+                  setModal(true);
                 }
               } else {
                 iceCreamBalls[i][0].ballX = p.windowWidth / 2 - 60;
@@ -190,81 +210,66 @@ class IceCreamGame extends React.Component {
     };
 
     const dropIceCreamBalls = () => {
-      if (hanzis[hanziIndex].length === 0) {
+      if (hanzis.length === 0) {
         return;
       }
-      let index = Math.floor(Math.random() * hanzis[hanziIndex].length);
+      let index = Math.floor(Math.random() * hanzis.length);
       // if there is still hanzi to drop in the hanzis list
-      if (hanzis[hanziIndex][index][1] !== 0) {
-        hanzis[hanziIndex][index][1] -= 1;
+      if (hanzis[index][1] !== 0) {
+        hanzis[index][1] -= 1;
         // let x = Math.floor(Math.random() * (windowWidth - 100));
         let x = 100;
         let hanziBall = new IceCreamBall(
           p.windowWidth / 2 - 60,
           10,
-          hanzis[hanziIndex][index][0],
+          hanzis[index][0],
           imgBalls[Math.floor(Math.random() * imgBalls.length)],
           p
         );
         index = Math.floor(Math.random() * imgBalls.length);
         iceCreamBalls.push([hanziBall, index]);
       } else {
-        hanzis[hanziIndex].splice(index, 1);
+        hanzis.splice(index, 1);
       }
     };
+  };
 
-    const goToNextLevel = () => {
-      this.setState({
-        score: 0,
-        nextLevel: false,
-        end: false,
-        showModal: false
-      });
+  const handleCloseModal = () => {
+    setModal(false);
+  };
 
-      if (levelIndex === levels.length) {
-        alert("reached last level!");
-      }
-
-      levelIndex += levelIndex === levels.length - 1 ? 0 : 1;
-      hanziIndex += hanziIndex === hanzis.length - 1 ? 0 : 1;
-      iceCreamCones = [];
-      iceCreamBalls = [];
-      p.setup();
-    };
-  }
-
-  handleShowModal() {
-    this.setState({ showModal: true });
-  }
-
-  handleCloseModal() {
-    this.setState({ showModal: false });
-  }
-
-  render() {
-    return (
-      <>
-        <Modal show={this.state.showModal} onHide={this.handleCloseModal}>
-          <Modal.Header closeButton>
+  return (
+    <Switch>
+      <Route path={path}>
+        <Modal show={showModal} onHide={handleCloseModal}>
+          <Modal.Header>
             <Modal.Title>Modal heading</Modal.Title>
           </Modal.Header>
-          <Modal.Body>Total score: {this.state.score}</Modal.Body>
+          <Modal.Body>You win!</Modal.Body>
           <Modal.Footer>
-            <Button variant="danger" onClick={this.handleCloseModal}>
-              Quit
+            <Button variant="danger">
+              <Link style={{ color: "white" }} to="/ice-cream-levels">
+                Quit
+              </Link>
             </Button>
+
             <Button
-              variant="info"
-              onClick={() => this.setState({ nextLevel: true })}
+              style={{ color: "white" }}
+              variant="warning"
+              onClick={onRestartGame}
             >
-              Next Level
+              Restart
             </Button>
           </Modal.Footer>
         </Modal>
-        <P5Wrapper sketch={this.sketch} />
-      </>
-    );
-  }
+        <P5Wrapper sketch={sketch} />
+      </Route>
+
+      <Route path="/ice-cream-levels">
+        <IceCreamGameLevels />
+      </Route>
+    </Switch>
+  );
 }
 
 export default IceCreamGame;

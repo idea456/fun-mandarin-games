@@ -5,7 +5,7 @@ import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 
 function Level(props) {
-  const { path } = useRouteMatch();
+  let { url } = useRouteMatch();
 
   return (
     <Card
@@ -21,7 +21,7 @@ function Level(props) {
       <Card.Title>{props.title}</Card.Title>
       <Card.Body>
         <Button variant="info">
-          <Link style={{ color: "white" }} to={`${path}/${props.index}`}>
+          <Link style={{ color: "white" }} to={`${url}/${props.index}`}>
             Enter
           </Link>
         </Button>

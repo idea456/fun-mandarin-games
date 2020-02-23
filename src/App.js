@@ -5,11 +5,8 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import "./App.css";
 
 import SnakeLevels from "./pages/SnakeLevels";
-import SnakeGame from "./pages/SnakeGame";
-import SpaceInvaders from "./pages/SpaceInvaders";
-import IceCreamGame from "./pages/IceCreamGame";
-
-import { fruitList } from "./data/SnakeGame/SnakeGame";
+import SpaceInvadersLevels from "./pages/SpaceInvadersLevels";
+import IceCreamGameLevels from "./pages/IceCreamGameLevels";
 
 function App() {
   return (
@@ -25,12 +22,12 @@ function App() {
                 </Link>
               </Button>
               <Button variant="warning" size="lg">
-                <Link to="/ice-cream-game" style={{ color: "white" }}>
+                <Link to="/ice-cream-levels" style={{ color: "white" }}>
                   Ice Cream
                 </Link>
               </Button>
               <Button variant="primary" size="lg">
-                <Link to="/space-invaders" style={{ color: "white" }}>
+                <Link to="/space-invaders-levels" style={{ color: "white" }}>
                   Space Invaders
                 </Link>
               </Button>
@@ -41,12 +38,12 @@ function App() {
           <SnakeLevels />
         </Route>
 
-        <Route path="/ice-cream-game">
-          <IceCreamGame />
+        <Route path="/ice-cream-levels">
+          <IceCreamGameLevels />
         </Route>
 
-        <Route path="/space-invaders">
-          <SpaceInvaders />
+        <Route path="/space-invaders-levels">
+          <SpaceInvadersLevels />
         </Route>
       </Switch>
     </Router>

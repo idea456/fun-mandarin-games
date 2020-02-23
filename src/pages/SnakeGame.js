@@ -15,7 +15,11 @@ import Button from "react-bootstrap/Button";
 import { hanzis } from "../data/SnakeGame/SnakeGame";
 
 // change the background here
-let background = [`game-area-1`, `game-area-2`, `game-area-3`];
+let background = [
+  require("../images/SnakeGame/background.jpg"),
+  require("../images/SnakeGame/background2.jpg"),
+  require("../images/SnakeGame/background3.jpg")
+];
 
 const getRandomCoordinates = (n = 1) => {
   let min = 1;
@@ -356,7 +360,18 @@ class SnakeGame extends React.Component {
 
           <Row>
             <Col md={8}>
-              <div className={this.background}>
+              <div
+                style={{
+                  fontFamily: "kaiTi",
+                  display: "inline-block",
+                  position: "relative",
+                  width: 160 * 4,
+                  height: 160 * 4,
+                  border: "2px solid #000",
+                  backgroundImage: `url(${this.props.background})`,
+                  backgroundSize: `${160 * 4}px ${160 * 4}px`
+                }}
+              >
                 <Snake
                   snakeDots={this.state.snakeDots}
                   snakeImgDirection={this.snakeImgDirection}
