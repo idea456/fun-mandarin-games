@@ -10,6 +10,7 @@ export default function Hanzi(x, y, hanzi, speed, img, audio, unique, p) {
   this.imgScale = 150;
   this.show = true;
   this.unique = unique;
+  this.angle = 0;
   this.audio =
     audio === "" ? require("../../audio/SpaceInvaders/explosion.wav") : audio;
 
@@ -35,6 +36,8 @@ export default function Hanzi(x, y, hanzi, speed, img, audio, unique, p) {
   };
 
   this.fall = function() {
+    this.x += p.cos(this.angle);
+    this.angle += 0.02;
     this.y += this.speed;
   };
 

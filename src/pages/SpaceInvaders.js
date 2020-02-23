@@ -25,6 +25,15 @@ let dropInterval;
 let lasers = [];
 let hanzisList = [];
 
+let position = [0, 0, 0, 0, 0];
+let positionCoor = [
+  window.innerWidth * 0.1,
+  window.innerWidth * 0.3,
+  window.innerWidth * 0.5,
+  window.innerWidth * 0.6,
+  window.innerWidth * 0.7
+];
+
 let obstaclesHanzis = [
   ["月", ""],
   ["日", ""],
@@ -45,16 +54,6 @@ let hanziSpeed = 1;
 class SpaceInvaders extends React.Component {
   constructor(props) {
     super(props);
-    // this.levelHanzi = [
-    //   ["狗", require("../audio/SpaceInvaders/狗.mp3")],
-    //   ["牛", require("../audio/SpaceInvaders/牛.mp3")],
-    //   ["虎", require("../audio/SpaceInvaders/虎.mp3")],
-    //   ["蛇", require("../audio/SpaceInvaders/蛇.mp3")],
-    //   ["马", require("../audio/SpaceInvaders/马.mp3")],
-    //   ["羊", require("../audio/SpaceInvaders/羊.mp3")],
-    //   ["猴", require("../audio/SpaceInvaders/猴.mp3")],
-    //   ["猪", require("../audio/SpaceInvaders/猪.mp3")]
-    // ];
     this.levelHanzi = this.props.level;
     this.state = {
       end: false,
@@ -127,16 +126,35 @@ class SpaceInvaders extends React.Component {
     };
 
     const dropHanzi = () => {
-      console.log(this.state.levelHanziArray);
       let choice = Math.floor(Math.random() * 2);
       let hanzi;
       let unique;
+      let x;
+      let i;
+      console.log(position);
       // drop obstacles hanzi
       if (choice === 0) {
+        let check = true;
+        while (check) {
+          i = Math.floor(Math.random() * positionCoor.length);
+          x = positionCoor[i];
+          if (position[i] === 1) {
+            i = Math.floor(Math.random() * positionCoor.length);
+            x = positionCoor[i];
+          } else {
+            check = false;
+          }
+        }
         hanzi =
           obstaclesHanzis[Math.floor(Math.random() * obstaclesHanzis.length)];
         unique = false;
       } else {
+        let i = Math.floor(Math.random() * positionCoor.length);
+        x = positionCoor[i];
+        for (let j = 0; j < position.length; j++) {
+          position[j] = 0;
+        }
+        position[i] = 1;
         // drop level hanzi
         if (this.state.dropLevelHanzi) {
           hanzi = this.state.levelHanzi;
@@ -150,7 +168,7 @@ class SpaceInvaders extends React.Component {
       try {
         hanzisList.push(
           new Hanzi(
-            Math.floor(Math.random() * (gameWidth * 0.7)),
+            x,
             -150,
             hanzi[0],
             hanziSpeed,
@@ -161,21 +179,21 @@ class SpaceInvaders extends React.Component {
           )
         );
       } catch {
-        hanzi =
-          obstaclesHanzis[Math.floor(Math.random() * obstaclesHanzis.length)];
-        unique = false;
-        hanzisList.push(
-          new Hanzi(
-            Math.floor(Math.random() * (gameWidth * 0.7)),
-            -150,
-            hanzi[0],
-            hanziSpeed,
-            imgPlanets[Math.floor(Math.random() * imgPlanets.length)],
-            hanzi[1],
-            unique,
-            p
-          )
-        );
+        // hanzi =
+        //   obstaclesHanzis[Math.floor(Math.random() * obstaclesHanzis.length)];
+        // unique = false;
+        // hanzisList.push(
+        //   new Hanzi(
+        //     Math.floor(Math.random() * (gameWidth * 0.7)),
+        //     -150,
+        //     hanzi[0],
+        //     hanziSpeed,
+        //     imgPlanets[Math.floor(Math.random() * imgPlanets.length)],
+        //     hanzi[1],
+        //     unique,
+        //     p
+        //   )
+        // );
       }
     };
 
@@ -202,7 +220,7 @@ class SpaceInvaders extends React.Component {
       p.fill(255);
       p.textSize(40);
 
-      p.text(`Score : ${this.state.score}`, window.innerWidth - 150, 50);
+      p.text(`Score : ${this.state.score}`, window.innerWidth - 200, 50);
       p.push();
 
       // loop to iterate through lasers array to draw the lasers
@@ -294,7 +312,7 @@ class SpaceInvaders extends React.Component {
           audio.play();
         }
       } catch {
-        return;
+        window.location.reload();
       }
     };
   };
