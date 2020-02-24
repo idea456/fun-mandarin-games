@@ -33,6 +33,7 @@ let positionCoor = [
   window.innerWidth * 0.6,
   window.innerWidth * 0.7
 ];
+let uniquePosition = [0, 0, 0, 0, 0];
 
 let obstaclesHanzis = [
   ["月", ""],
@@ -120,7 +121,7 @@ class SpaceInvaders extends React.Component {
       speedInterval = setInterval(() => {
         // if hanziSpeed reaches maximum(20) then stop adding
         hanziSpeed += hanziSpeed >= 8 ? 0 : 1;
-      }, 10000);
+      }, 15000);
 
       dropInterval = setInterval(dropHanzi, 1500);
     };
@@ -131,35 +132,37 @@ class SpaceInvaders extends React.Component {
       let unique;
       let x;
       let i;
-      console.log(position);
+      console.log(uniquePosition);
       // drop obstacles hanzi
       if (choice === 0) {
-        let check = true;
-        while (check) {
-          i = Math.floor(Math.random() * positionCoor.length);
-          x = positionCoor[i];
-          if (position[i] === 1) {
+        i = Math.floor(Math.random() * positionCoor.length);
+        while (true) {
+          // if a level hanzi is currently occupying the x-column
+          if (uniquePosition[i] === 1) {
             i = Math.floor(Math.random() * positionCoor.length);
-            x = positionCoor[i];
           } else {
-            check = false;
+            break;
           }
         }
-        hanzi =
-          obstaclesHanzis[Math.floor(Math.random() * obstaclesHanzis.length)];
+        i = Math.floor(Math.random() * positionCoor.length);
+        x = positionCoor[i];
+        position[i] += 1;
+        hanzi = obstaclesHanzis[i];
         unique = false;
       } else {
-        let i = Math.floor(Math.random() * positionCoor.length);
-        x = positionCoor[i];
-        for (let j = 0; j < position.length; j++) {
-          position[j] = 0;
-        }
-        position[i] = 1;
         // drop level hanzi
         if (this.state.dropLevelHanzi) {
-          hanzi = this.state.levelHanzi;
-          unique = true;
-          this.setState({ dropLevelHanzi: false });
+          i = Math.floor(Math.random() * positionCoor.length);
+          for (let j = 0; j < position.length; j++) {
+            if (position[j] === 0) {
+              x = positionCoor[j];
+              uniquePosition[j] += 1;
+              hanzi = this.state.levelHanzi;
+              unique = true;
+              this.setState({ dropLevelHanzi: false });
+              break;
+            }
+          }
         } else {
           return;
         }
@@ -175,25 +178,12 @@ class SpaceInvaders extends React.Component {
             imgPlanets[Math.floor(Math.random() * imgPlanets.length)],
             hanzi[1],
             unique,
+            i,
             p
           )
         );
       } catch {
-        // hanzi =
-        //   obstaclesHanzis[Math.floor(Math.random() * obstaclesHanzis.length)];
-        // unique = false;
-        // hanzisList.push(
-        //   new Hanzi(
-        //     Math.floor(Math.random() * (gameWidth * 0.7)),
-        //     -150,
-        //     hanzi[0],
-        //     hanziSpeed,
-        //     imgPlanets[Math.floor(Math.random() * imgPlanets.length)],
-        //     hanzi[1],
-        //     unique,
-        //     p
-        //   )
-        // );
+        return;
       }
     };
 
@@ -239,6 +229,8 @@ class SpaceInvaders extends React.Component {
                 // regenerate a new hanzi
                 let index = Math.floor(Math.random() * this.levelHanzi.length);
                 let hanzi = this.levelHanzi[index];
+                // unique position is now free of position
+                uniquePosition[hanzisList[j].pos] = 0;
                 this.setState({
                   score: this.state.score + 1,
                   levelHanzi: hanzi,
@@ -247,7 +239,8 @@ class SpaceInvaders extends React.Component {
                 this.levelHanzi.splice(index, 1);
               } else {
                 this.setState({
-                  score: this.state.score - (this.state.score <= 0 ? 0 : 1)
+                  end: true,
+                  msg: "You lose!"
                 });
               }
               let audio = new Audio(hanzisList[j].audio);
@@ -255,6 +248,7 @@ class SpaceInvaders extends React.Component {
               let imgX = hanzisList[j].x;
               let imgY = hanzisList[j].y;
               setTimeout(p.image(imgExplosion[0], imgX, imgY, 150, 150), 2000);
+
               // remove the hanzi and laser
               hanzisList.splice(j, 1);
               lasers.splice(i, 1);
@@ -275,11 +269,10 @@ class SpaceInvaders extends React.Component {
             if (hanzisList[i].y > window.innerHeight + 50) {
               // if the out of bound hanzi is a level hanzi
               if (hanzisList[i].unique) {
-                hanzisList[i].x = Math.floor(
-                  Math.random() * window.innerWidth * 0.7
-                );
                 hanzisList[i].y = -100;
+                // out of bounds is an obstacle hanzi
               } else {
+                position[hanzisList[i].pos] -= hanzisList[i].pos <= 0 ? 0 : 1;
                 hanzisList.splice(i, 1);
               }
             }
@@ -292,8 +285,12 @@ class SpaceInvaders extends React.Component {
     };
 
     p.keyReleased = function() {
-      if (p.key != " ") {
-        ship.setDir(0);
+      try {
+        if (p.key != " ") {
+          ship.setDir(0);
+        }
+      } catch {
+        window.location.reload();
       }
     };
 
@@ -377,9 +374,11 @@ class SpaceInvaders extends React.Component {
             </Modal.Header>
             <Modal.Body>Score : {this.state.score}</Modal.Body>
             <Modal.Footer>
-              <Button variant="danger" onClick={this.quitLevel}>
-                Quit
-              </Button>
+              {this.state.msg !== "You lose!" && (
+                <Button variant="danger" onClick={this.quitLevel}>
+                  Quit
+                </Button>
+              )}
               <Button variant="warning" onClick={this.restartLevel}>
                 Retry
               </Button>
@@ -389,45 +388,51 @@ class SpaceInvaders extends React.Component {
         </>
       );
     } catch {
-      return (
-        <>
-          <Card
-            style={{
-              width: "15rem",
-              position: "absolute",
-              top: 100,
-              left: window.innerWidth - 300
-            }}
-          >
-            <Card.Body>
-              <Card.Text
-                className="card-text"
-                style={{ textAlign: "center", fontSize: 100 }}
-              ></Card.Text>
-            </Card.Body>
-          </Card>
+      if (!this.state.end) {
+        window.location.reload();
+      } else {
+        return (
+          <>
+            <Card
+              style={{
+                width: "15rem",
+                position: "absolute",
+                top: 100,
+                left: window.innerWidth - 300
+              }}
+            >
+              <Card.Body>
+                <Card.Text
+                  className="card-text"
+                  style={{ textAlign: "center", fontSize: 100 }}
+                ></Card.Text>
+              </Card.Body>
+            </Card>
 
-          <Modal
-            show={this.state.showModal}
-            onHide={this.handleClose}
-            backdrop="static"
-          >
-            <Modal.Header>
-              <Modal.Title>{this.state.msg}</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>Score : {this.state.score}</Modal.Body>
-            <Modal.Footer>
-              <Button variant="danger" onClick={this.quitLevel}>
-                Quit
-              </Button>
-              <Button variant="warning" onClick={this.restartLevel}>
-                Retry
-              </Button>
-            </Modal.Footer>
-          </Modal>
-          <P5Wrapper sketch={this.sketch} />
-        </>
-      );
+            <Modal
+              show={this.state.showModal}
+              onHide={this.handleClose}
+              backdrop="static"
+            >
+              <Modal.Header>
+                <Modal.Title>{this.state.msg}</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>Score : {this.state.score}</Modal.Body>
+              <Modal.Footer>
+                {this.state.msg !== "You lose!" && (
+                  <Button variant="danger" onClick={this.quitLevel}>
+                    Quit
+                  </Button>
+                )}
+                <Button variant="warning" onClick={this.restartLevel}>
+                  Retry
+                </Button>
+              </Modal.Footer>
+            </Modal>
+            <P5Wrapper sketch={this.sketch} />
+          </>
+        );
+      }
     }
   }
 }
