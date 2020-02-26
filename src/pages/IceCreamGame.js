@@ -93,7 +93,9 @@ function IceCreamGame(props) {
         p.loadImage(require("../images/IceCream/ice-cream-ball-1.png")),
         p.loadImage(require("../images/IceCream/ice-cream-ball-2.png")),
         p.loadImage(require("../images/IceCream/ice-cream-ball-3.png")),
-        p.loadImage(require("../images/IceCream/ice-cream-ball-4.png"))
+        p.loadImage(require("../images/IceCream/ice-cream-ball-4.png")),
+        p.loadImage(require("../images/IceCream/ice-cream-ball-5.png")),
+        p.loadImage(require("../images/IceCream/ice-cream-ball-6.png"))
       ];
       imgBallDefault = p.loadImage(
         require("../images/IceCream/ice-cream-ball-default.png")
@@ -147,7 +149,6 @@ function IceCreamGame(props) {
       p.textFont(font);
 
       if (iceCreamBalls.length !== 0) {
-        console.log(iceCreamBalls);
         iceCreamBalls[0][0].show(imgBalls[iceCreamBalls[0][1]]);
       }
 
@@ -194,6 +195,10 @@ function IceCreamGame(props) {
                 iceCreamBalls.splice(i, 1);
                 score += 1;
                 if (iceCreamBalls.length === 0) {
+                  let audio = new Audio(
+                    require("../audio/IceCreamGame/you-win.mp3")
+                  );
+                  audio.play();
                   setEnd(true);
                   setModal(true);
                 }

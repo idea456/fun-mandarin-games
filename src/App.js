@@ -36,6 +36,7 @@ function App() {
         </Route>
         <Route path="/snake-levels">
           <SnakeLevels />
+          {/* <SnakeGame2 /> */}
         </Route>
 
         <Route path="/ice-cream-levels">

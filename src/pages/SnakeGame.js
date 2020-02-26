@@ -21,32 +21,69 @@ let background = [
   require("../images/SnakeGame/background3.jpg")
 ];
 
-const getRandomCoordinates = (n = 1) => {
-  let min = 1;
-  let max = 40;
+const distance = (x1, y1, x2, y2) => {
+  return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+};
+
+const getRandomCoordinates = (n, obstaclesHanzi) => {
+  let max = 20;
+  let spawnRadius = 30;
   let ret = [];
-  for (let i = 0; i < n; i++) {
-    let x = Math.floor((Math.random() * (max - min + 1) + min) / 2) * 4;
-    let y = Math.floor((Math.random() * (max - min + 1) + min) / 2) * 4;
-    // check for any similar coordinates and delete them to avoid overlapping the hanzis
-    let check = true;
-    while (check) {
-      for (let j = 0; j < ret.length; j++) {
-        if (x === ret[j][0] && y === ret[j][1]) {
-          x = Math.floor((Math.random() * (max - min + 1) + min) / 2) * 4;
-          y = Math.floor((Math.random() * (max - min + 1) + min) / 2) * 4;
-          j = 0;
+  let overlapping = false;
+  let protection = 0;
+
+  // means its a level hanzi
+  if (n === 1) {
+    while (ret.length < 1) {
+      //for (let i = 0; i < n; i++) {
+      let x = Math.floor(Math.random() * 22) * 4;
+      let y = Math.floor(Math.random() * 22) * 4;
+
+      overlapping = false;
+      for (let j = 0; j < obstaclesHanzi.length; j++) {
+        let d = distance(x, y, obstaclesHanzi[j][0], obstaclesHanzi[j][1]);
+        if (d < spawnRadius) {
+          // they are overlapping
+          overlapping = true;
+          break;
         }
       }
-      check = false;
-    }
 
-    ret.push([x, y]);
+      // if not overlapping then keep it
+      if (!overlapping) {
+        ret.push([x, y]);
+      }
+
+      protection++;
+      if (protection > 2000) {
+        break;
+      }
+    }
+  } else {
+    while (ret.length < n) {
+      //for (let i = 0; i < n; i++) {
+      let x = Math.floor(Math.random() * 25) * 4;
+      let y = Math.floor(Math.random() * 25) * 4;
+
+      overlapping = false;
+      for (let j = 0; j < ret.length; j++) {
+        let d = distance(x, y, ret[j][0], ret[j][1]);
+        if (d < spawnRadius) {
+          // they are overlapping
+          overlapping = true;
+          break;
+        }
+      }
+
+      // if not overlapping then keep it
+      if (!overlapping) {
+        ret.push([x, y]);
+      }
+    }
   }
 
   return ret;
 };
-
 const randomKanji = list => {
   let index = Math.floor(Math.random() * list.length);
   return list[index];
@@ -59,12 +96,12 @@ class SnakeGame extends React.Component {
     this.level = this.props.level;
     this.background = background[Math.floor(Math.random() * background.length)];
     this.hanziCount = 2;
+    this.obstacleFood = getRandomCoordinates(this.hanziCount);
+    this.levelFood = getRandomCoordinates(1, this.obstacleFood);
     this.state = {
       gameOver: false,
       show: false,
       score: 0,
-      food: getRandomCoordinates(this.hanziCount),
-      levelFood: getRandomCoordinates(this.levelCount),
       kanji: randomKanji(hanzis),
       kanjiList: this.randomKanjis(4),
       levelKanji: randomKanji(this.level),
@@ -93,6 +130,7 @@ class SnakeGame extends React.Component {
     this.checkIfOutOfBounds();
     this.checkIfCollapsed();
     this.checkIfEatFood();
+    console.log(this.state.snakeDots[this.state.snakeDots.length - 1]);
   }
 
   onKeyDown = e => {
@@ -174,17 +212,17 @@ class SnakeGame extends React.Component {
 
   checkIfEatFood() {
     let head = this.state.snakeDots[this.state.snakeDots.length - 1];
-    for (let i = 0; i < this.state.food.length; i++) {
-      let food = this.state.food[i];
+    for (let i = 0; i < this.obstacleFood.length; i++) {
+      let food = this.obstacleFood[i];
       if (head[0] === food[0] && head[1] === food[1]) {
         // collision detected between 'obstacles' food!
         this.hanziCount -= this.hanziCount === 2 ? 0 : 1;
         let audio = new Audio(require("../audio/SnakeGame/wrong.mp3"));
         audio.play();
+        this.obstacleFood = getRandomCoordinates(this.hanziCount);
+        this.levelFood = getRandomCoordinates(1, this.obstacleFood);
         this.setState({
           score: this.state.score - (this.state.score === 0 ? 0 : 1),
-          food: getRandomCoordinates(this.hanziCount),
-          levelFood: getRandomCoordinates(this.levelCount),
           kanji: randomKanji(hanzis),
           kanjiList: this.randomKanjis(this.hanziCount),
           levelKanji: randomKanji(this.level)
@@ -197,8 +235,8 @@ class SnakeGame extends React.Component {
         }
       }
     }
-    for (let i = 0; i < this.state.levelFood.length; i++) {
-      let levelFood = this.state.levelFood[i];
+    for (let i = 0; i < this.levelFood.length; i++) {
+      let levelFood = this.levelFood[i];
       if (this.state.levelKanji[0].length === 2) {
         if (
           (head[0] === levelFood[0] && head[1] === levelFood[1]) ||
@@ -207,10 +245,11 @@ class SnakeGame extends React.Component {
           this.hanziCount += this.hanziCount === 5 ? 0 : 1;
           let audio = new Audio(this.state.levelKanji[1]);
           audio.play();
+          this.obstacleFood = getRandomCoordinates(this.hanziCount);
+          this.levelFood = getRandomCoordinates(1, this.obstacleFood);
           this.setState({
             score: this.state.score + 1,
             food: getRandomCoordinates(this.hanziCount),
-            levelFood: getRandomCoordinates(this.levelCount),
             kanji: randomKanji(hanzis),
             kanjiList: this.randomKanjis(this.hanziCount),
             levelKanji: randomKanji(this.level)
@@ -222,10 +261,10 @@ class SnakeGame extends React.Component {
           this.hanziCount += this.hanziCount === 5 ? 0 : 1;
           let audio = new Audio(this.state.levelKanji[1]);
           audio.play();
+          this.obstacleFood = getRandomCoordinates(this.hanziCount);
+          this.levelFood = getRandomCoordinates(1, this.obstacleFood);
           this.setState({
             score: this.state.score + 1,
-            food: getRandomCoordinates(this.hanziCount),
-            levelFood: getRandomCoordinates(this.levelCount),
             kanji: randomKanji(hanzis),
             kanjiList: this.randomKanjis(this.hanziCount),
             levelKanji: randomKanji(this.level)
@@ -300,12 +339,12 @@ class SnakeGame extends React.Component {
   }
 
   onRestartGame() {
+    this.obstacleFood = getRandomCoordinates(this.hanziCount);
+    this.levelFood = getRandomCoordinates(1, this.obstacleFood);
     this.setState({
       score: 0,
       gameOver: false,
       show: false,
-      food: getRandomCoordinates(this.hanziCount),
-      levelFood: getRandomCoordinates(this.levelCount),
       levelKanji: randomKanji(this.level),
       kanji: randomKanji(hanzis),
       speed: 100,
@@ -321,6 +360,8 @@ class SnakeGame extends React.Component {
     this.levelCount = 1;
     this.hanziCount = 2;
     if (!this.state.gameOver) {
+      let audio = new Audio(require("../audio/SnakeGame/game-over.mp3"));
+      audio.play();
       this.setState({ gameOver: true, show: true });
     }
   }
@@ -376,7 +417,7 @@ class SnakeGame extends React.Component {
                   snakeDots={this.state.snakeDots}
                   snakeImgDirection={this.snakeImgDirection}
                 />
-                {this.state.levelFood.map((levelFood, i) => {
+                {this.levelFood.map((levelFood, i) => {
                   return (
                     <Food
                       key={i}
@@ -386,7 +427,7 @@ class SnakeGame extends React.Component {
                   );
                 })}
 
-                {this.state.food.map((food, i) => {
+                {this.obstacleFood.map((food, i) => {
                   return (
                     <Food key={i} dot={food} kanji={this.state.kanjiList[i]} />
                   );

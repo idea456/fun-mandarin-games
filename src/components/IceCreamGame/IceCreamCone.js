@@ -49,8 +49,10 @@ export default function IceCreamCone(
     p.fill(100);
     p.textSize(50);
     p.textAlign(p.CENTER);
+    p.push();
     p.textStyle(p.BOLD);
     p.text(this.pinyin, this.coneX + 35, this.coneY + 180);
+    p.pop();
     if (this.iceCreamBalls.length !== 0) {
       for (let i = 0; i < this.iceCreamBalls.length; i++) {
         this.iceCreamBalls[i].show(this.imgBalls[i]);

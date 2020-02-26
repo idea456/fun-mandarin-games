@@ -34,6 +34,22 @@ export const levelsAssets = [
   ["level4", require("../../images/SnakeGame/background4.jpg")]
 ];
 
+// tambah obstacles di sini
+// formatnya : [hanzi, ""]
+export const obstaclesHanzis = [
+  ["月", ""],
+  ["日", ""],
+  ["火", ""],
+  ["青", ""],
+  ["空", ""],
+  ["我", ""],
+  ["名", ""],
+  ["前", ""],
+  ["手", ""],
+  ["天", ""],
+  ["気", ""]
+];
+
 // nama_level = [["title level", background_level, level_list]]
 let level1 = [
   ["animals", require("../../images/SnakeGame/background.jpg"), animalList],
@@ -173,3 +189,4 @@ let level4 = [
 ];
 
 export const levels = [level1, level2, level3, level4];
+

@@ -7,6 +7,7 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 
 import "../styles/SpaceInvaders.css";
+import { obstaclesHanzis } from "../data/SpaceInvaders/SpaceInvaders";
 
 import Ship from "../components/SpaceInvaders/Ship";
 import Laser from "../components/SpaceInvaders/Laser";
@@ -35,20 +36,6 @@ let positionCoor = [
 ];
 let uniquePosition = [0, 0, 0, 0, 0];
 
-let obstaclesHanzis = [
-  ["月", ""],
-  ["日", ""],
-  ["火", ""],
-  ["青", ""],
-  ["空", ""],
-  ["我", ""],
-  ["名", ""],
-  ["前", ""],
-  ["手", ""],
-  ["天", ""],
-  ["気", ""]
-];
-
 let gameWidth = window.innerWidth;
 let hanziSpeed = 1;
 
@@ -65,7 +52,8 @@ class SpaceInvaders extends React.Component {
       dropLevelHanzi: true,
       levelHanziIndex: 0,
       levelHanzi: this.setupLevelHanzi(),
-      msg: ""
+      msg: "",
+      unique: false
     };
 
     this.sketch = this.sketch.bind(this);
@@ -96,8 +84,7 @@ class SpaceInvaders extends React.Component {
         p.loadImage(require("../images/SpaceInvaders/planet1.png")),
         p.loadImage(require("../images/SpaceInvaders/planet2.png")),
         p.loadImage(require("../images/SpaceInvaders/planet3.png")),
-        p.loadImage(require("../images/SpaceInvaders/planet4.png")),
-        p.loadImage(require("../images/SpaceInvaders/planet6.png"))
+        p.loadImage(require("../images/SpaceInvaders/planet4.png"))
       ];
 
       img = p.loadImage(require("../images/SpaceInvaders/player-blue-1.png"));
@@ -123,7 +110,7 @@ class SpaceInvaders extends React.Component {
         hanziSpeed += hanziSpeed >= 8 ? 0 : 1;
       }, 15000);
 
-      dropInterval = setInterval(dropHanzi, 1500);
+      dropInterval = setInterval(dropHanzi, 2000);
     };
 
     const dropHanzi = () => {
@@ -132,7 +119,6 @@ class SpaceInvaders extends React.Component {
       let unique;
       let x;
       let i;
-      console.log(uniquePosition);
       // drop obstacles hanzi
       if (choice === 0) {
         i = Math.floor(Math.random() * positionCoor.length);
@@ -144,7 +130,6 @@ class SpaceInvaders extends React.Component {
             break;
           }
         }
-        i = Math.floor(Math.random() * positionCoor.length);
         x = positionCoor[i];
         position[i] += 1;
         hanzi = obstaclesHanzis[i];
@@ -224,7 +209,11 @@ class SpaceInvaders extends React.Component {
               // the laser hits a level hanzi
               if (hanzisList[j].unique) {
                 if (this.levelHanzi.length === 0) {
-                  this.setState({ end: true, msg: "You win!" });
+                  let audio = new Audio(
+                    require("../audio/SpaceInvaders/you-win.mp3")
+                  );
+                  audio.play();
+                  this.setState({ end: true, unique: true, msg: "You win!" });
                 }
                 // regenerate a new hanzi
                 let index = Math.floor(Math.random() * this.levelHanzi.length);
@@ -238,9 +227,14 @@ class SpaceInvaders extends React.Component {
                 });
                 this.levelHanzi.splice(index, 1);
               } else {
+                let audio = new Audio(
+                  require("../audio/SpaceInvaders/game-over.mp3")
+                );
+                audio.play();
                 this.setState({
                   end: true,
-                  msg: "You lose!"
+                  unique: false,
+                  msg: "Wrong hanzi! You lose!"
                 });
               }
               let audio = new Audio(hanzisList[j].audio);
@@ -277,7 +271,17 @@ class SpaceInvaders extends React.Component {
               }
             }
             if (ship.hits(hanzisList[i])) {
-              this.setState({ showModal: true, end: true, msg: "You lose!" });
+              console.log(hanzisList[i]);
+              let audio = new Audio(
+                require("../audio/SpaceInvaders/game-over.mp3")
+              );
+              audio.play();
+              this.setState({
+                showModal: true,
+                end: true,
+                unique: false,
+                msg: "You hit a planet! You lose!"
+              });
             }
           }
         }
@@ -374,7 +378,7 @@ class SpaceInvaders extends React.Component {
             </Modal.Header>
             <Modal.Body>Score : {this.state.score}</Modal.Body>
             <Modal.Footer>
-              {this.state.msg !== "You lose!" && (
+              {this.state.unique && (
                 <Button variant="danger" onClick={this.quitLevel}>
                   Quit
                 </Button>

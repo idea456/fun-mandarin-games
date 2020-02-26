@@ -7,13 +7,12 @@ export default function Hanzi(x, y, hanzi, speed, img, audio, unique, pos, p) {
   this.pinyin = hanzi[1];
   this.speed = speed;
   this.img = img;
-  this.imgScale = unique
-    ? Math.floor(Math.random() * (200 - 160 + 1) + 160)
-    : Math.floor(Math.random() * (160 - 140 + 1) + 140);
+  this.imgScale = 160;
   this.show = true;
   this.unique = unique;
   this.angle = 0;
   this.pos = pos;
+  this.oscillatingSpeed = 3;
   this.audio =
     audio === "" ? require("../../audio/SpaceInvaders/explosion.wav") : audio;
 
@@ -35,7 +34,7 @@ export default function Hanzi(x, y, hanzi, speed, img, audio, unique, pos, p) {
 
   this.fall = function() {
     // oscillate the planet
-    this.x += p.cos(this.angle);
+    this.x += p.cos(this.angle) * this.oscillatingSpeed;
     this.angle += 0.05;
     this.y += this.speed;
   };
