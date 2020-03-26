@@ -1,5 +1,5 @@
 ## Fun Mandarin Games
-This project was created using React with p5.js
+This project was created using React with p5.js during my internship in the tuition center Fun Mandarin.
 
 ## Screenshots
 ![Screenshot 2020-03-26 at 12 32 12 PM](https://user-images.githubusercontent.com/25546711/77610576-0fbee880-6f5e-11ea-83ff-dc1b640f9198.png)
