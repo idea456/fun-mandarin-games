@@ -1,5 +1,5 @@
 ## Fun Mandarin Games
-This project was created using React with p5.js during my internship in the tuition center Fun Mandarin.
+This project was created using React with p5.js during my volunteering work in the tuition center Fun Mandarin. These games are created for young students learning Chinese to make learning Hanzi more interactive and fun!
 
 ## Screenshots
 ![Screenshot 2020-03-26 at 12 32 12 PM](https://user-images.githubusercontent.com/25546711/77610576-0fbee880-6f5e-11ea-83ff-dc1b640f9198.png)
